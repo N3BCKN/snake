@@ -41,6 +41,8 @@ class Snake
       @body << [head[0] + 1,head[1]]     
     end
 
+    set_head_image
+
     @grow = false
   end 
 
@@ -71,6 +73,7 @@ class Snake
 
   private 
   def set_head_image
+    Image.new("./images/snake_#{@direction}.png", x: head[0] * BOX, y: head[1] * BOX)
   end
 
   def head
