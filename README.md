@@ -1,4 +1,4 @@
-## just a re-creation of the classic arcade game 
+### just a re-creation of the classic arcade game 
 
 
 <br /> 
