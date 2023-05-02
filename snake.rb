@@ -1,13 +1,14 @@
 require 'ruby2d'
 
-WIDTH = 600
-HEIGHT = 800
-SNAKE_COLOR = '#62AE5E'
+WIDTH            = 600
+HEIGHT           = 800
+SNAKE_COLOR      = '#62AE5E'
 BACKGROUND_COLOR = '#F4E386'
-BOX = 20 
+SCORE_COLOR      = '#2F4858'
+BOX              = 20 
 
 def draw_score(score)
-  Text.new(score,x: 10, y: 10, size: 30, color: 'blue')
+  Text.new(score,x: 10, y: 10, size: 30, color: SCORE_COLOR)
 end
 
 class Snake
@@ -82,16 +83,10 @@ class Snake
 end
 
 class Fruit
-  def initialize(snake_body)
-    @x = WIDTH / BOX / 2 
-    @y = HEIGHT / BOX / 2 
-  end
-
-  def respawn(snake_body)
+  def spawn(snake_body)
     loop do
       @x = rand(1...WIDTH / BOX)
       @y = rand(1...HEIGHT / BOX)
-
       break unless snake_body.any?([@x, @y])
     end 
   end
@@ -112,7 +107,8 @@ set background: BACKGROUND_COLOR
 set fps_cap: 10
 
 snake = Snake.new
-fruit = Fruit.new(snake.body)
+fruit = Fruit.new
+fruit.spawn(snake.body)
 
 update do
   clear 
@@ -129,7 +125,7 @@ update do
   snake.move
 
   if fruit.eaten?(snake.body)
-    fruit.respawn(snake.body)
+    fruit.spawn(snake.body)
     snake.grow
     snake.score += 10
   end
