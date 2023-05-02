@@ -59,6 +59,15 @@ class Snake
   end
 
   def grow
+    @grow = true
+  end
+
+  def hit_wall?
+    @body.last[0] < 0 || @body.last[0] > (WIDTH / BOX) ||  @body.last[1] < 0 || @body.last[0] > (HEIGHT / BOX) 
+  end 
+
+  def hit_itself? 
+    @body.uniq.length != @body.length
   end
 
   private 
@@ -74,8 +83,8 @@ class Fruit
 
   def respawn(snake_body)
     loop do
-      @x = rand(1..WIDTH / BOX)
-      @y = rand(1..HEIGHT / BOX)
+      @x = rand(1...WIDTH / BOX)
+      @y = rand(1...HEIGHT / BOX)
 
       break unless snake_body.any?([@x, @y])
     end 
@@ -93,18 +102,24 @@ end
 set width: WIDTH
 set height: HEIGHT
 set color: BACKGROUND_COLOR
-set fps_cap: 20
+set fps_cap: 10
 
 snake = Snake.new
 fruit = Fruit.new(snake.body)
 
 update do
   clear 
-  
+
   snake.draw
-  snake.move
   fruit.draw
   draw_score(snake.score)
+
+  if snake.hit_wall? || snake.hit_itself? 
+    Text.new("GAME OVER", x: 100, y: 300, size: 70, color: 'red')
+    next
+  end 
+
+  snake.move
 
   if fruit.eaten?(snake.body)
     fruit.respawn(snake.body)
