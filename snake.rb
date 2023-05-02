@@ -18,6 +18,7 @@ class Snake
     @body      = [[2,2], [2,3], [2,4], [2,5]]
     @direction = 'down'
     @score     = 0
+    @grow      = false
   end
 
   def draw 
@@ -27,7 +28,7 @@ class Snake
   end 
 
   def move
-    @body.shift
+    @body.shift unless @grow
     head = @body.last 
 
     case @direction
@@ -40,6 +41,8 @@ class Snake
     when 'right'
       @body << [head[0] + 1,head[1]]     
     end
+
+    @grow = false
   end 
 
   def possible_direction?(new_direction)
@@ -105,7 +108,7 @@ update do
 
   if fruit.eaten?(snake.body)
     fruit.respawn(snake.body)
-    # snake.grow
+    snake.grow
 
     snake.score += 10
   end
