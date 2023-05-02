@@ -2,8 +2,8 @@ require 'ruby2d'
 
 WIDTH = 600
 HEIGHT = 800
-BASE_COLOR = '#ffffff'
-BACKGROUND_COLOR = '#000000'
+SNAKE_COLOR = '#62AE5E'
+BACKGROUND_COLOR = '#F4E386'
 BOX = 20 
 
 def draw_score(score)
@@ -23,13 +23,12 @@ class Snake
 
   def draw 
     @body.each do |element|
-      Square.new(x: element[0] * BOX, y: element[1] * BOX, size: BOX - 1, color: BASE_COLOR)
+      Square.new(x: element[0] * BOX, y: element[1] * BOX, size: BOX - 1, color: SNAKE_COLOR)
     end
   end 
 
   def move
     @body.shift unless @grow
-    head = @body.last 
 
     case @direction
     when 'up'
@@ -63,7 +62,7 @@ class Snake
   end
 
   def hit_wall?
-    @body.last[0] < 0 || @body.last[0] > (WIDTH / BOX) ||  @body.last[1] < 0 || @body.last[0] > (HEIGHT / BOX) 
+    head[0] < 0 || head[0] > (WIDTH / BOX) ||  head[1] < 0 || head[0] > (HEIGHT / BOX) 
   end 
 
   def hit_itself? 
@@ -72,6 +71,10 @@ class Snake
 
   private 
   def set_head_image
+  end
+
+  def head
+    @body.last
   end
 end
 
@@ -91,7 +94,7 @@ class Fruit
   end
 
   def draw 
-    Square.new(x: @x * BOX, y: @y * BOX, size: BOX, color: 'red')
+    Image.new('./images/apple.png', x: @x * BOX, y: @y * BOX)
   end
 
   def eaten?(snake_body)
@@ -99,9 +102,10 @@ class Fruit
   end
 end
 
+set title: 'snake'
 set width: WIDTH
 set height: HEIGHT
-set color: BACKGROUND_COLOR
+set background: BACKGROUND_COLOR
 set fps_cap: 10
 
 snake = Snake.new
@@ -124,7 +128,6 @@ update do
   if fruit.eaten?(snake.body)
     fruit.respawn(snake.body)
     snake.grow
-
     snake.score += 10
   end
 end
