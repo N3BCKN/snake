@@ -6,13 +6,18 @@ BASE_COLOR = '#ffffff'
 BACKGROUND_COLOR = '#000000'
 BOX = 20 
 
+def draw_score(score)
+  Text.new(score,x: 10, y: 10, size: 30, color: 'blue')
+end
 
 class Snake
-  attr_accessor :direction
+  attr_accessor :direction, :score
+  attr_reader   :body
 
   def initialize
-    @body = [[2,2], [2,3], [2,4], [2,5]]
+    @body      = [[2,2], [2,3], [2,4], [2,5]]
     @direction = 'down'
+    @score     = 0
   end
 
   def draw 
@@ -50,14 +55,37 @@ class Snake
     true
   end
 
+  def grow
+  end
+
   private 
   def set_head_image
   end
 end
 
+class Fruit
+  def initialize(snake_body)
+    @x = WIDTH / BOX / 2 
+    @y = HEIGHT / BOX / 2 
+  end
 
+  def respawn(snake_body)
+    loop do
+      @x = rand(1..WIDTH / BOX)
+      @y = rand(1..HEIGHT / BOX)
 
+      break unless snake_body.any?([@x, @y])
+    end 
+  end
 
+  def draw 
+    Square.new(x: @x * BOX, y: @y * BOX, size: BOX, color: 'red')
+  end
+
+  def eaten?(snake_body)
+    snake_body.last == [@x, @y]
+  end
+end
 
 set width: WIDTH
 set height: HEIGHT
@@ -65,12 +93,22 @@ set color: BACKGROUND_COLOR
 set fps_cap: 20
 
 snake = Snake.new
+fruit = Fruit.new(snake.body)
 
 update do
   clear 
   
   snake.draw
   snake.move
+  fruit.draw
+  draw_score(snake.score)
+
+  if fruit.eaten?(snake.body)
+    fruit.respawn(snake.body)
+    # snake.grow
+
+    snake.score += 10
+  end
 end
 
 on :key_down do |event|
